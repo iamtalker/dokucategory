@@ -32,4 +32,4 @@ Copy this folder to `lib/plugins/dokucategory` (or install the zip from the rele
 
 ## License
 
-GPL 2
+MIT

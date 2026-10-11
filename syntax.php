@@ -11,7 +11,7 @@
  *
  * A node lists the pages that carry the tag of the node AND the tags of all its ancestors.
  *
- * @license GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license MIT
  */
 
 class syntax_plugin_dokucategory extends DokuWiki_Syntax_Plugin {
