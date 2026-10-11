@@ -4,4 +4,4 @@ email  mysticacala@gmail.com
 date   2026-10-11
 name   DokuCategory Plugin
 desc   Builds a nested category tree (with page counts) from the tags of the tag plugin
-url    https://www.dokuwiki.org/plugin:tag
+url    https://www.dokuwiki.org/plugin:dokucategory
