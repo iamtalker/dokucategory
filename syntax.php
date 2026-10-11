@@ -101,6 +101,8 @@ class syntax_plugin_dokucategory extends DokuWiki_Syntax_Plugin {
     protected function renderNodes($nodes, $tag, $parent, $path, &$cache) {
         global $ID;
         $html = '<ul>' . DOKU_LF;
+        // and: a child needs the tags of all its parents too / own: a child needs only its own tag
+        $own = $this->getConf('match_mode') === 'own';
 
         foreach ($nodes as $node) {
             $clean = $tag->parseTagList($node['name'], true);
@@ -108,22 +110,26 @@ class syntax_plugin_dokucategory extends DokuWiki_Syntax_Plugin {
             $mine  = $clean ? $clean[0] : '';
             $tags  = array_merge($path, $mine === '' ? [] : [$mine]);
 
-            // pages with this tag, restricted to the pages that match all ancestors
-            if ($mine === '') {
+            if ($own) {
+                // pages that have this tag or the tag of any category below it
+                $set   = $this->tagsOf($node, $tag);
                 $pages = [];
-            } else {
-                if (!isset($cache[$mine])) {
-                    $cache[$mine] = array_values($tag->getIndexedPagesMatchingTagQuery([$mine]));
+                foreach ($set as $t) {
+                    $pages = array_merge($pages, $this->pagesWithTag($t, $tag, $cache));
                 }
-                $pages = $cache[$mine];
+                $pages = array_values(array_unique($pages));
+                $query = implode(' ', $set);                 // "a b c": any of them
+            } else {
+                // pages with this tag, restricted to the pages that match all ancestors
+                $pages = $mine === '' ? [] : $this->pagesWithTag($mine, $tag, $cache);
                 if ($parent !== null) $pages = array_values(array_intersect($pages, $parent));
+                $query = implode(' +', $tags);               // "a +b +c": all of them
             }
             $pages = array_values(array_filter($pages, function ($id) use ($tag) {
                 return page_exists($id) && $tag->isVisible($id);
             }));
 
-            // query "a +b +c" for the tag plugin's page list
-            $url = wl($ID, ['do' => 'showtag', 'tag' => implode(' +', $tags)]);
+            $url = wl($ID, ['do' => 'showtag', 'tag' => $query]);
 
             $html .= '<li class="level1"><div class="li">'
                 . '<a href="' . $url . '" rel="tag">' . hsc($label) . '</a>'
@@ -131,10 +137,29 @@ class syntax_plugin_dokucategory extends DokuWiki_Syntax_Plugin {
                     ? ' <span class="dokucategory_count">(' . count($pages) . ')</span>' : '')
                 . '</div>' . DOKU_LF;
             if (!empty($node['children'])) {
-                $html .= $this->renderNodes($node['children'], $tag, $pages, $tags, $cache);
+                $html .= $this->renderNodes($node['children'], $tag, $own ? null : $pages, $tags, $cache);
             }
             $html .= '</li>' . DOKU_LF;
         }
         return $html . '</ul>' . DOKU_LF;
+    }
+
+    /** page ids that carry the (cleaned) tag, cached per tag */
+    protected function pagesWithTag($clean, $tag, &$cache) {
+        if (!isset($cache[$clean])) {
+            $cache[$clean] = array_values($tag->getIndexedPagesMatchingTagQuery([$clean]));
+        }
+        return $cache[$clean];
+    }
+
+    /** cleaned tags of a node and of all nodes below it */
+    protected function tagsOf($node, $tag) {
+        $out = [];
+        $clean = $tag->parseTagList($node['name'], true);
+        if ($clean && $clean[0] !== '') $out[] = $clean[0];
+        foreach ($node['children'] as $child) {
+            $out = array_merge($out, $this->tagsOf($child, $tag));
+        }
+        return array_values(array_unique($out));
     }
 }

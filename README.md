@@ -18,6 +18,13 @@ Uses the normal DokuWiki list syntax. Each category counts the pages that have *
 - `파이썬` – pages tagged 프로그래밍 and 파이썬
 - `웹` – pages tagged 프로그래밍, 파이썬 and 웹
 
+This is the default (`match_mode = and`). If pages that have only the tag of a sub category (without the parent tag) should be listed too, switch the setting to `own` (see Settings): then a category counts every page that has **its own tag**, and a parent category counts the pages of all categories below it as well.
+
+| `match_mode` | `웹` lists | `프로그래밍` lists |
+|---|---|---|
+| `and` (default) | pages tagged 프로그래밍 **and** 파이썬 **and** 웹 | pages tagged 프로그래밍 |
+| `own` | pages tagged 웹 | pages tagged 프로그래밍, 파이썬 **or** 웹 |
+
 Clicking a category opens the tag plugin's page list for that tag combination.
 
 ## Install
@@ -29,6 +36,7 @@ Copy this folder to `lib/plugins/dokucategory` (or install the zip from the rele
 | Setting | Default | Description |
 |---|---|---|
 | `show_count` | on | show the page count after each category |
+| `match_mode` | `and` | `and`: a sub category needs the tags of all its parents too. `own`: a sub category needs only its own tag; a parent also counts the pages of its sub categories |
 
 ## License
 
