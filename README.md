@@ -6,17 +6,17 @@ A [DokuWiki](https://www.dokuwiki.org) plugin that builds a nested category tree
 
 ```
 dokucategory{{
-  * 경전
-    * 단학
-      * 종교
+  * 프로그래밍
+    * 파이썬
+      * 웹
 }}
 ```
 
 Uses the normal DokuWiki list syntax. Each category counts the pages that have **its own tag and the tags of all its parent categories**:
 
-- `경전` – pages tagged 경전
-- `단학` – pages tagged 경전 and 단학
-- `종교` – pages tagged 경전, 단학 and 종교
+- `프로그래밍` – pages tagged 프로그래밍
+- `파이썬` – pages tagged 프로그래밍 and 파이썬
+- `웹` – pages tagged 프로그래밍, 파이썬 and 웹
 
 Clicking a category opens the tag plugin's page list for that tag combination.
 

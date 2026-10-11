@@ -4,9 +4,9 @@
  *
  * Syntax:
  *   dokucategory{{
- *     * 경전
- *       * 단학
- *         * 종교
+ *     * 프로그래밍
+ *       * 파이썬
+ *         * 웹
  *   }}
  *
  * A node lists the pages that carry the tag of the node AND the tags of all its ancestors.
